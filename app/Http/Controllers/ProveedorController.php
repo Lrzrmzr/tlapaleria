@@ -50,7 +50,10 @@ class ProveedorController extends Controller
      */
     public function show(Proveedor $proveedor)
     {
-        //
+        return response()->json([
+            'status' => true,
+            'data' => $proveedor
+        ], 200);
     }
 
     /**
@@ -58,7 +61,27 @@ class ProveedorController extends Controller
      */
     public function update(Request $request, Proveedor $proveedor)
     {
-        //
+        $rules=[
+            'name' => 'required|string|min:1|max:255',
+            'empresa' => 'required|string|min:1|max:255',
+            'telefono' => 'required|string|min:1|max:15'
+        ];
+
+        $validator = Validator::make($request->input(), $rules);
+
+        if($validator->fails()){
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors()->all()
+            ], 400);
+        }
+
+        $proveedor->update($request->input());
+
+        return response()->json([
+            'status' => true,
+            'message' => 'El proveedor se actualizó correctamente'
+        ], 200);
     }
 
     /**
@@ -66,6 +89,11 @@ class ProveedorController extends Controller
      */
     public function destroy(Proveedor $proveedor)
     {
-        //
+        $proveedor->delete();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Proveedor eliminado satisfactoriamente'
+        ], 200);
     }
 }
